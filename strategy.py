@@ -9,7 +9,9 @@ def strategy(df, trigger, window=1):
     df['prior_n'] = df.log_ret.rolling(window).sum()
     df.dropna(inplace = True)
 
-    df['position'] = [1 if i>=trigger else 0 for i in df.prior_n]
+    df['position'] = [1 if i>=trigger else 0 for i in df.prior_n] # Long or neutral
+    #df['position'] = [1 if i>=trigger else -1 if i<=-trigger else 0 for i in df.prior_n] # Long, short or neutral
+
     '''
     df['position']=0
     for i in range(len(df['position']) - 1):
@@ -24,18 +26,27 @@ def strategy(df, trigger, window=1):
     df['ret'] = np.exp(df['log_ret'])
     df['strat'] = np.exp(df['log_strat'])
 
+    # number of trades
+    df['trades'] = 0
     trades = 0
-
     for i in range(len(df['position']) - 1):
         if df.iloc[i]['position'] != df.iloc[i+1]['position']:
             trades += 1
+        df.iloc[i+1, df.columns.get_loc('trades')] = trades
 
-    print('# of trades in period: ', trades)
+    # Volatility
+    vol = df[['log_ret', 'log_strat']].std()*len(df)**.5
+
+    print('Number of trades in period: ', trades)
     print('Percent of time in long position: ', sum(df['position'])/len(df['position'])*100 , '%')
-    
-    df[['ret', 'strat']].cumprod().plot()
-    df['position'].plot()
-    df['prior_n'].plot()
+    print('Asset Volatility: ', vol['log_ret']*100, '%')
+    print('Strategy Volatility: ', vol['log_strat']*100, '%')
+
+    data_to_plot = (df[['ret', 'strat']].cumprod()-1) * 100
+    data_to_plot[['ret', 'strat']].plot()
+    df['trades'].plot()
+    #df['position'].plot()
+    #df['prior_n'].plot()
 
     plt.grid(visible=True)
     plt.show()
