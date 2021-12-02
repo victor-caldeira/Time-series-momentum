@@ -1,7 +1,4 @@
 import numpy as np
-import pandas as pd
-import yfinance as yf
-import matplotlib.pyplot as plt
 
 def strategy(df, trigger, window=1):
     df = df.copy()
@@ -14,8 +11,8 @@ def strategy(df, trigger, window=1):
     
     df['log_strat'] = df.position.shift(1) * df.log_ret
 
-    df['ret'] = np.exp(df['log_ret'])
-    df['strat'] = np.exp(df['log_strat'])
+    df['Asset return'] = np.exp(df['log_ret'])
+    df['Strategy return'] = np.exp(df['log_strat'])
 
     # number of trades
     df['trades'] = 0
