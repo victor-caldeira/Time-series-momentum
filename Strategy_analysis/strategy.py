@@ -1,6 +1,6 @@
 import numpy as np
 
-def strategy(df, trigger, window=1):
+def strategy(df, trigger, window):
     df = df.copy()
     df['log_ret'] = np.log(df.Close.pct_change() + 1)
     df['prior_n'] = df.log_ret.rolling(window).sum()

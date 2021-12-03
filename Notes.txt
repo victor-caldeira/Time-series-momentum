@@ -1,0 +1,9 @@
+BTC-USD 12h (janela de 60 min)
+df = yf.download('BTC-USD', start = '2020-11-29', interval = '60m')
+df = strategy(df, 0.004, 12)
+
+ETH-USD 12h (janela de 60 min)
+df = yf.download('ETH-USD', start = '2021-1-1', interval = '60m')
+df = strategy(df, 0.0015, 12)
+
+ETH-USD 11d (janela de 1d)
